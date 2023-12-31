@@ -3,3 +3,4 @@ pillow
 tqdm
 configparser
 flask
+Flask-SocketIO
