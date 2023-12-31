@@ -108,11 +108,67 @@ document.addEventListener('DOMContentLoaded', function() {
     //setupSocket();
 }, false);
 
-function startScraper() {
-    if (validateForm()) {
-        // Something?
-        showToast("success", "Scraper started!");
+      // Funzione per aggiornare la barra di avanzamento
+      function updateProgressBar(progress) {
+        var progressBar = document.getElementById('progressBar');
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressBar.innerText = progress + '%';
     }
-}
 
+
+    function downloadImages(formData){
+        var socket = io().connect('http://' + document.domain + ':' + location.port);
+        console.log(formData);
+       //Triggers the start_download event, passing formData to the backend
+       socket.emit('start_download', formData);
+        
+        //whenever the update_progress event is sent from the backend... log the progress (data is the JSON received from the BE)
+        socket.on('update_progress', function(data) {
+            console.log('Progress:', data.progress);
+            updateProgressBar(data.progress);
+        });
+        
+        //same as above, when the status is completed then we send the message download complete.
+        socket.on('download_complete', function() {
+            console.log('Download complete!');
+        });
+    }
+
+
+function startScraper() {
+   if (validateForm()) {
+    // Construct a json with all the current values set in the form
+
+    var outputDirName = document.getElementById("output_dir_name").value;
+    var startDate = document.getElementById("start_date").value;
+    var subredditName = document.getElementById("subreddit_name").value;
+    var imageLimit = document.getElementById("image_limit").value;
+    var baseFolder = document.getElementById("base_folder").value;
+    var writeToMongoDB = document.getElementById("write_to_mongodb").checked;
+
+    // object creation
+    var formData = {
+        outputDirName: outputDirName,
+        startDate: startDate,
+        subredditName: subredditName,
+        imageLimit: imageLimit,
+        baseFolder: baseFolder,
+        writeToMongoDB: writeToMongoDB
+    };
+
+    // if you want to write to mongo create a new object with the info
+    if (writeToMongoDB) {
+        formData.mongoConnection = {
+            connectionString: document.getElementById("mongo_connection_string").value,
+            database: document.getElementById("mongo_database").value,
+            collection: document.getElementById("mongo_collection").value
+        };
+    }
+       showToast("success", "Scraper started!");
+       //We pass this to our socket
+       downloadImages(formData);
+       
+   }
+}
 

@@ -106,10 +106,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }, false);
 
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("toggleMongoSettings")
+    toggleMongoSettings();
+    //setupSocket();
+}, false);
+
+      // Funzione per aggiornare la barra di avanzamento
+      function updateProgressBar(progress) {
+        var progressBar = document.getElementById('progressBar');
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressBar.innerText = progress + '%';
+    }
+
+
+    function downloadImages(){
+        var socket = io().connect('http://' + document.domain + ':' + location.port);
+
+       //Triggers the start_download event
+       socket.emit('start_download');
+        
+        //whenever the update_progress event is sent from the backend... log the progress (data is the JSON received from the BE)
+        socket.on('update_progress', function(data) {
+            console.log('Progress:', data.progress);
+            updateProgressBar(data.progress);
+        });
+        
+        //same as above, when the status is completed then we send the message download complete.
+        socket.on('download_complete', function() {
+            console.log('Download complete!');
+        });
+    }
+
+
 function startScraper() {
    if (validateForm()) {
        // Something?
        showToast("success", "Scraper started!");
+       downloadImages();
+       
    }
 }
 

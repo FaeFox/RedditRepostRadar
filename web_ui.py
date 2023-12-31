@@ -16,8 +16,9 @@ ini_file_path = script_dir + '/appconfig.ini'
 
 # Main BE call - just as an example
 @socketio.on('start_download')
-def start_download():
+def start_download(data):
     # Dummy download
+    print("current formData: " + str(data))
     for progress in range(0, 101, 10):
         # emits the update_progress event and sends a json response
         socketio.emit('update_progress', {'progress': progress})

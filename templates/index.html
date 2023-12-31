@@ -60,7 +60,6 @@
         <div class="mb-3">
             <div class="setting">
                 <label for="base_folder"class="form-label">Base Folder:</label>
-               
                 <input type="text" id="base_folder" class="form-control" name="base_folder" value="{{ settings.base_folder }}">
                 <div id="base_folder_Help" class="form-text">Location of images for comparison.</div>
                 
@@ -103,14 +102,14 @@
             </div>
         </div>
         <div class="text-center">
-         <button type="button" class="btn btn-primary" onclick="downloadProgress()">Start Scraper</button>
+         <button type="button" class="btn btn-primary" onclick="startScraper()">Start Scraper</button>
         </div>
     </form>
     </div>
  </div>
 </div>
     <div class="progress">
-        <div class="progress-bar" id="progressBar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+        <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
     <a class="float-end" href="{{ url_for('comparator') }}">
         <span class="arrow-icon">Go to comparator</span>
@@ -118,32 +117,7 @@
   </a>
 
   <script>
-        // Funzione per aggiornare la barra di avanzamento
-    function updateProgressBar(progress) {
-        var progressBar = document.getElementById('progressBar');
-        progressBar.style.width = progress + '%';
-        progressBar.setAttribute('aria-valuenow', progress);
-        progressBar.innerText = progress + '%';
-    }
-
-
-    function downloadProgress(){
-        var socket = io().connect('http://' + document.domain + ':' + location.port);
-
-       //Triggers the start_download event
-       socket.emit('start_download');
-        
-        //whenever the update_progress event is sent from the backend... log the progress (data is the JSON received from the BE)
-        socket.on('update_progress', function(data) {
-            console.log('Progress:', data.progress);
-            updateProgressBar(data.progress);
-        });
-        
-        //same as above, when the status is completed then we send the message download complete.
-        socket.on('download_complete', function() {
-            console.log('Download complete!');
-        });
-    }
+  
   </script>
 </body>
 </html>
