@@ -1,0 +1,5 @@
+imagehash
+pillow
+tqdm
+configparser
+flask
