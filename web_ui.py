@@ -3,14 +3,31 @@ from flask import Flask, jsonify, render_template, request, redirect, url_for
 import configparser
 import os
 from scraper import main, progress
+from flask_socketio import SocketIO
 
 app = Flask(__name__, static_folder='static')
-
+socketio = SocketIO(app)
 
 # Get the directory of the current script [Windows Compatibility]
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 ini_file_path = script_dir + '/appconfig.ini'
+
+
+# Main BE call - just as an example
+@socketio.on('start_download')
+def start_download():
+    # Dummy download
+    for progress in range(0, 101, 10):
+        # emits the update_progress event and sends a json response
+        socketio.emit('update_progress', {'progress': progress})
+        socketio.sleep(1)  # dummy pause
+
+
+    # and at the end... we also emit
+    socketio.emit('update_progress', {'progress': 100})
+    socketio.emit('download_complete')
+
 
 @app.route('/')
 def index():

@@ -100,10 +100,12 @@ function checkProgress() {
 }
 
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("toggleMongoSettings")
     toggleMongoSettings();
-
+    //setupSocket();
 }, false);
 
 function startScraper() {
