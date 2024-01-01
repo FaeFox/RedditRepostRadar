@@ -6,6 +6,7 @@ import sys
 import re
 import os
 import configparser
+# from web_ui import emit_progress_scraper
 tqdm_installed = True
 try:
     from tqdm import tqdm
@@ -14,23 +15,21 @@ except:
     tqdm_installed = False
 from utils.scraper_utils import *
 
-progress = 0
-def update_progress(new_value: int):
-    global progress
-    progress = new_value
 
 
-def main():
+def startScraper(configuration: dict):
     # Get the directory of the current script [Windows Compatibility]
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # ini file parsing
-    config = configparser.ConfigParser()
-    config.read(script_dir + '/appconfig.ini')
+    # config = configparser.ConfigParser()
+    # config.read(script_dir + '/appconfig.ini')
 
-    output_dir_name = config.get('scraper_configuration', 'output_dir_name')
-    backward_days = config.getint('scraper_configuration', 'backward_days')
-    subreddit_name = config.get("scraper_configuration", "subreddit_name")
+    output_dir_name = configuration.get('outputDirName')
+    backward_days = 5
+    subreddit_name = configuration.get("subredditName")
+
+
     # api doc: https://old.reddit.com/dev/api/
     url = "https://reddit.com/r/"+subreddit_name.strip() +".json"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -76,12 +75,16 @@ def main():
 
     if tqdm_installed:
         for url in tqdm(url_list, desc="Downloading images", unit="img"):
-            update_progress((url_list.index(url) + 1)/total_urls*100)
+            progress = (url_list.index(url) + 1)/total_urls*100
+            
             download_image(script_dir,output_dir_name, url)
     else:
         for index, url in enumerate(url_list):
+            progress = (url_list.index(url) + 1)/total_urls*100
             default_progress_bar(index + 1, total_urls)
+            
+            
             download_image(script_dir, output_dir_name, url)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     startScraper()

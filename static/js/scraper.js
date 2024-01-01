@@ -120,11 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function downloadImages(formData){
         var socket = io().connect('http://' + document.domain + ':' + location.port);
         console.log(formData);
-       //Triggers the start_download event, passing formData to the backend
-       socket.emit('start_download', formData);
+       //Triggers the start_scraper event, passing formData to the backend
+       socket.emit('start_scraper', formData);
         
-        //whenever the update_progress event is sent from the backend... log the progress (data is the JSON received from the BE)
-        socket.on('update_progress', function(data) {
+        //whenever the update_scraper_progress event is sent from the backend... log the progress (data is the JSON received from the BE)
+        socket.on('update_scraper_progress', function(data) {
             console.log('Progress:', data.progress);
             updateProgressBar(data.progress);
         });

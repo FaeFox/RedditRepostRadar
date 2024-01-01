@@ -1,2 +1,5 @@
 json/
 *.json
+*.jpg
+*.png
+images_api/

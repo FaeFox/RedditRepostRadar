@@ -7,6 +7,8 @@ import json
 # This is my mini pc, I have it in the path because it's on a shared folder I access from my main PC
 from utils.comparator_utils import *
 import configparser
+import math 
+
 # ini file parsing 
 
 config = configparser.ConfigParser()
