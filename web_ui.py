@@ -5,6 +5,9 @@ import os
 # from scraper import main, progress
 from flask_socketio import SocketIO
 import math 
+import webbrowser
+import time
+import requests
 
 # Scraper
 tqdm_installed = True
@@ -27,8 +30,21 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 ini_file_path = script_dir + '/appconfig.ini'
 
 
-#scraper function moved from file
+def server_is_up(url):
+    """Check if the server is up by attempting to connect to it."""
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            return True
+    except requests.ConnectionError:
+        return False
+    return False
 
+def open_browser_when_ready(url):
+    """Wait for the server to start, then open the browser."""
+    while not server_is_up(url):
+        time.sleep(0.5)  # Check every half second
+    webbrowser.open_new(url)
 
 def startScraper(configuration: dict):
     # Get the directory of the current script [Windows Compatibility]
@@ -167,4 +183,6 @@ def emit_progress_scraper(progress):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    server_url = 'http://127.0.0.1:5000/'  # Adjust port if necessary
+    threading.Thread(target=open_browser_when_ready, args=(server_url,)).start()
+    app.run(debug=True, use_reloader=False)
