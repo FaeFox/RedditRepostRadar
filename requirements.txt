@@ -4,3 +4,4 @@ tqdm
 configparser
 flask
 Flask-SocketIO
+requests
